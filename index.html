@@ -20,7 +20,6 @@
 
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); padding: 20px; color: var(--text-color); margin: 0; overflow-y: scroll; }
         
-        /* Huvudcontainer */
         .app-container {
             max-width: 98%;
             margin: 0 auto;
@@ -31,43 +30,29 @@
         /* --- HELSKÄRMSLÄGE --- */
         .app-container.fullscreen-mode {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            padding: 0;
-            margin: 0;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            padding: 0; margin: 0;
             background: var(--card-bg);
             z-index: 99999;
             box-sizing: border-box;
-            display: flex;       
-            flex-direction: column;
-            overflow: hidden; /* Förhindra dubbla scrollbars */
-        }
-
-        /* Dölj rubrik och nedre sektion i helskärm */
-        .app-container.fullscreen-mode h2,
-        .app-container.fullscreen-mode .bottom-section {
-            display: none !important;
-        }
-
-        /* Anpassa övre sektionen i helskärm */
-        .app-container.fullscreen-mode .top-section {
-            height: 100%;
-            margin: 0;
-            border: none;
-            border-radius: 0;
             display: flex;
             flex-direction: column;
-            padding: 10px;
-            box-shadow: none;
+            overflow: hidden;
         }
 
-        /* Tidslinjen i helskärm */
+        .app-container.fullscreen-mode h2,
+        .app-container.fullscreen-mode .bottom-section { display: none !important; }
+
+        .app-container.fullscreen-mode .top-section {
+            height: 100%; margin: 0;
+            border: none; border-radius: 0;
+            display: flex; flex-direction: column;
+            padding: 10px; box-shadow: none;
+        }
+
         .app-container.fullscreen-mode #visualization {
-            flex-grow: 1; /* Ta all plats som blir över */
-            border: none;
-            width: 100%;
+            flex-grow: 1; border: none; width: 100%;
         }
 
         /* --- STANDARD STYLING --- */
@@ -84,37 +69,196 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 20px;
-            /* Lägg till en ID eller klass för att kunna mäta höjden i JS */
-            flex-shrink: 0; 
+            flex-shrink: 0;
         }
 
-        .search-wrapper { width: 100%; max-width: 600px; position: relative; }
-        .search-wrapper input {
-            width: 100%; padding: 10px 15px 10px 40px; border: 1px solid #ccc;
-            border-radius: 25px; font-size: 1rem; outline: none; box-sizing: border-box;
+        /* Sök + landfilter rad */
+        .search-row {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 760px;
+            align-items: center;
         }
+
+        .search-wrapper { flex: 1; position: relative; }
+        .search-wrapper input {
+            width: 100%; padding: 10px 15px 10px 40px;
+            border: 1px solid #ccc; border-radius: 25px;
+            font-size: 1rem; outline: none; box-sizing: border-box;
+        }
+        .search-wrapper input:focus { border-color: var(--primary-btn); box-shadow: 0 0 0 2px rgba(44,62,80,0.12); }
         .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; }
+
+        /* Landfilter – multi-select chips */
+        .country-filter-wrapper {
+            position: relative;
+            flex-shrink: 0;
+        }
+        .country-filter-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            padding: 9px 16px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: #333;
+            white-space: nowrap;
+            min-width: 140px;
+            justify-content: space-between;
+            transition: border-color 0.15s;
+        }
+        .country-filter-btn:hover, .country-filter-btn.open { border-color: var(--primary-btn); }
+        .country-filter-btn.has-selection { border-color: var(--primary-btn); background: #eef2f7; font-weight: 600; }
+        .country-filter-btn .btn-label { flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; }
+        .country-filter-btn .caret { font-size: 0.75rem; color: #888; transition: transform 0.2s; }
+        .country-filter-btn.open .caret { transform: rotate(180deg); }
+
+        .country-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            z-index: 500;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            width: 280px;
+            max-height: 360px;
+            overflow: hidden;
+            flex-direction: column;
+        }
+        .country-dropdown.open { display: flex; }
+
+        .country-dropdown-search {
+            padding: 10px 12px 6px;
+            border-bottom: 1px solid #eee;
+            flex-shrink: 0;
+        }
+        .country-dropdown-search input {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            outline: none;
+            box-sizing: border-box;
+        }
+        .country-dropdown-search input:focus { border-color: var(--primary-btn); }
+
+        .country-dropdown-actions {
+            display: flex;
+            gap: 6px;
+            padding: 6px 12px;
+            border-bottom: 1px solid #eee;
+            flex-shrink: 0;
+        }
+        .country-dropdown-actions button {
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 10px;
+            background: #f0f3f4;
+            color: #333;
+        }
+        .country-dropdown-actions button:hover { background: #dde3e8; }
+
+        .country-list {
+            overflow-y: auto;
+            flex: 1;
+            padding: 4px 0;
+        }
+        .country-list-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 14px;
+            cursor: pointer;
+            font-size: 0.87rem;
+            user-select: none;
+            transition: background 0.1s;
+        }
+        .country-list-item:hover { background: #f5f7f9; }
+        .country-list-item.selected { background: #eef2f7; font-weight: 600; }
+        .country-list-item input[type=checkbox] { accent-color: var(--primary-btn); width: 14px; height: 14px; flex-shrink: 0; }
+        .country-list-item .count-badge {
+            margin-left: auto;
+            font-size: 0.72rem;
+            background: #e8edf2;
+            color: #666;
+            padding: 1px 6px;
+            border-radius: 8px;
+        }
+        .country-list-item.selected .count-badge { background: #d0dce8; color: #2c3e50; }
+
+        /* Sortering */
+        .sort-select-wrapper { position: relative; flex-shrink: 0; }
+        .sort-select-wrapper select {
+            appearance: none;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            padding: 10px 32px 10px 14px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            outline: none;
+            color: #333;
+            min-width: 130px;
+        }
+        .sort-select-wrapper select:focus { border-color: var(--primary-btn); }
+        .sort-select-wrapper::after {
+            content: '\f0dc';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 12px; top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            pointer-events: none;
+            font-size: 0.8rem;
+        }
 
         .btn-group { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
 
         button {
-            background-color: var(--primary-btn); color: white; border: none; padding: 8px 16px;
-            border-radius: 4px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;
+            background-color: var(--primary-btn); color: white; border: none;
+            padding: 8px 16px; border-radius: 4px; cursor: pointer;
+            font-size: 0.9rem; display: flex; align-items: center; gap: 6px;
         }
         button:hover { background-color: var(--primary-btn-hover); }
         #close-fs-btn { background-color: #e74c3c; display: none; }
         button.secondary { background-color: #95a5a6; }
         button.secondary:hover { background-color: #7f8c8d; }
+        button.active-sync { background-color: #27ae60 !important; }
 
         .filters { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
-        .filters label { 
-            cursor: pointer; font-size: 0.75rem; background: #fff; padding: 3px 8px; 
-            border-radius: 12px; border: 1px solid #ddd; display: flex; align-items: center; user-select: none;
+        .filters label {
+            cursor: pointer; font-size: 0.75rem; background: #fff;
+            padding: 3px 8px; border-radius: 12px; border: 1px solid #ddd;
+            display: flex; align-items: center; user-select: none;
         }
         .filters label:hover { background: #eee; }
         .filters input { margin-right: 5px; }
+
+        /* Resultaträknare */
+        .result-bar {
+            font-size: 0.82rem;
+            color: #555;
+            background: #f0f3f4;
+            border-radius: 6px;
+            padding: 5px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .result-bar strong { color: #2c3e50; }
+        .result-bar .result-sep { color: #bbb; }
 
         #visualization { border: 1px solid var(--border-color); border-radius: 4px; background: white; }
 
@@ -132,10 +276,10 @@
         .legend-text strong { display: block; color: #2c3e50; margin-bottom: 2px; }
         .legend-text span { display: block; color: #666; line-height: 1.3; }
 
-        .feed-container { width: 100%; padding-bottom: 50px;}
-        .feed-item { 
-            margin-bottom: 10px; background: #fff; border: 1px solid var(--border-color); 
-            border-radius: 6px; overflow: hidden; scroll-margin-top: 20px; 
+        .feed-container { width: 100%; padding-bottom: 50px; }
+        .feed-item {
+            margin-bottom: 10px; background: #fff; border: 1px solid var(--border-color);
+            border-radius: 6px; overflow: hidden; scroll-margin-top: 20px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         .highlight-item { border: 2px solid var(--primary-btn) !important; box-shadow: 0 0 15px rgba(44, 62, 80, 0.2); transform: scale(1.01); transition: all 0.3s; }
@@ -146,18 +290,73 @@
         summary::after { content: '+'; font-size: 1.5em; color: #aaa; font-weight: 300; }
         details[open] summary::after { content: '-'; }
 
-        .summary-content { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; width: 100%;}
-        .date-badge { font-family: monospace; color: #666; background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 0.85em;}
-        .title-text { font-weight: 600; color: #2c3e50; font-size: 1rem;}
-        .cat-badge { font-size: 0.7em; padding: 2px 8px; border-radius: 10px; color: #fff; font-weight: bold; margin-left: auto; margin-right: 10px; text-transform: uppercase;}
-        
-        .content { padding: 15px 20px; border-top: 1px solid #eee; background: #fafbfc; line-height: 1.6; color: #444; font-size: 0.95em;}
-        .source-link { display: inline-block; margin-top: 10px; color: #3498db; text-decoration: none; font-weight: 500;}
+        .summary-content { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; width: 100%; }
+        .date-badge { font-family: monospace; color: #666; background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 0.85em; white-space: nowrap; }
+        .country-tag {
+            font-size: 0.72em; padding: 2px 7px; border-radius: 10px;
+            background: #e8edf2; color: #2c3e50; font-weight: 600;
+            cursor: pointer; white-space: nowrap;
+            border: 1px solid #d0d7de;
+            transition: background 0.15s;
+        }
+        .country-tag:hover { background: #d0dce8; }
+        .title-text { font-weight: 600; color: #2c3e50; font-size: 1rem; flex: 1; min-width: 120px; }
+        .cat-badge { font-size: 0.7em; padding: 2px 8px; border-radius: 10px; color: #fff; font-weight: bold; margin-left: auto; margin-right: 10px; text-transform: uppercase; white-space: nowrap; }
+
+        /* Dela-knapp */
+        .share-btn {
+            background: none; border: none; cursor: pointer;
+            color: #aaa; font-size: 0.85em; padding: 2px 6px;
+            border-radius: 4px; margin-right: 4px; display: inline-flex; align-items: center; gap: 4px;
+        }
+        .share-btn:hover { color: var(--primary-btn); background: #f0f3f4; }
+
+        .content { padding: 15px 20px; border-top: 1px solid #eee; background: #fafbfc; line-height: 1.6; color: #444; font-size: 0.95em; }
+        .source-link { display: inline-block; margin-top: 10px; color: #3498db; text-decoration: none; font-weight: 500; }
         .source-link:hover { text-decoration: underline; }
 
+        /* MOBILVY — kompaktläge */
+        .timeline-toggle-bar {
+            display: none;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        .timeline-toggle-bar button { font-size: 0.85rem; padding: 6px 14px; }
+
+        /* Toastrmeddelanden */
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: #2c3e50; color: #fff; padding: 10px 22px;
+            border-radius: 25px; font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 99999; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .toast.show { opacity: 1; }
+
+        /* RESPONSIVT */
         @media (max-width: 900px) {
             .bottom-section { grid-template-columns: 1fr; }
             .sidebar { position: static; margin-bottom: 20px; }
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 8px; }
+            .search-row { flex-wrap: wrap; }
+            .country-filter-btn { min-width: 120px; font-size: 0.82rem; padding: 8px 12px; }
+            .country-dropdown { width: 260px; }
+            .search-wrapper input { font-size: 0.9rem; }
+            .btn-group { gap: 6px; }
+            button { font-size: 0.8rem; padding: 7px 12px; }
+            .filters label { font-size: 0.68rem; padding: 3px 6px; }
+            /* Dölj tidslinjen på smal mobil som standard */
+            #visualization { display: none; }
+            #visualization.mobile-visible { display: block; }
+            .timeline-toggle-bar { display: flex; }
+            .top-section { padding: 12px; }
+            .title-text { font-size: 0.92rem; }
+            .cat-badge { display: none; } /* plats sparas, ikonen räcker */
+            .controls { gap: 8px; }
         }
     </style>
 </head>
@@ -166,40 +365,84 @@
 <div class="app-container" id="main-container">
     
     <section class="top-section">
-        <h2 style="text-align:center; margin-top:0; color:#2c3e50; margin-bottom:15px;">Svensk OSINT Omvärldsbevakning: Händelser & Tidslinje</h2>
+        <h2 style="text-align:center; margin-top:0; color:#2c3e50; margin-bottom:15px;">Svensk OSINT Omvärldsbevakning: Händelser &amp; Tidslinje</h2>
 
         <div class="controls" id="controls-panel">
-            <div class="search-wrapper">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" id="search-input" placeholder="Sök händelse, plats, innehåll..." oninput="handleSearch()">
+
+            <!-- Sökning + land + sortering -->
+            <div class="search-row">
+                <div class="search-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Sök händelse, plats, innehåll..." oninput="handleSearch()" aria-label="Sök händelser">
+                </div>
+                <div class="country-filter-wrapper" id="country-filter-wrapper">
+                    <button class="country-filter-btn" id="country-filter-btn" onclick="toggleCountryDropdown()" aria-haspopup="listbox" aria-expanded="false" aria-label="Filtrera på land">
+                        <span class="btn-label" id="country-btn-label">🌍 Alla länder</span>
+                        <i class="fas fa-chevron-down caret"></i>
+                    </button>
+                    <div class="country-dropdown" id="country-dropdown" role="listbox" aria-multiselectable="true">
+                        <div class="country-dropdown-search">
+                            <input type="text" id="country-search-input" placeholder="Sök land..." oninput="filterCountryList()" aria-label="Sök i landlistan">
+                        </div>
+                        <div class="country-dropdown-actions">
+                            <button onclick="selectAllCountries()">Välj alla</button>
+                            <button onclick="clearCountries()">Rensa</button>
+                        </div>
+                        <div class="country-list" id="country-list"></div>
+                    </div>
+                </div>
+                <div class="sort-select-wrapper">
+                    <select id="sort-select" onchange="handleSort()" aria-label="Sorteringsordning">
+                        <option value="newest">Nyast först</option>
+                        <option value="oldest">Äldst först</option>
+                        <option value="country">Land (A–Z)</option>
+                        <option value="category">Kategori (A–Z)</option>
+                    </select>
+                </div>
             </div>
 
+            <!-- Knappar -->
             <div class="btn-group">
                 <button onclick="enterFullscreen()" id="open-fs-btn"><i class="fas fa-expand"></i> Helskärm</button>
                 <button onclick="exitFullscreen()" id="close-fs-btn"><i class="fas fa-times"></i> Stäng helskärm</button>
-                <button class="secondary" onclick="zoomTimeline(-0.2)" title="Zooma ut"><i class="fas fa-search-minus"></i></button>
-                <button class="secondary" onclick="zoomTimeline(0.2)" title="Zooma in"><i class="fas fa-search-plus"></i></button>
+                <button class="secondary" onclick="zoomTimeline(-0.2)" title="Zooma ut" aria-label="Zooma ut"><i class="fas fa-search-minus"></i></button>
+                <button class="secondary" onclick="zoomTimeline(0.2)" title="Zooma in" aria-label="Zooma in"><i class="fas fa-search-plus"></i></button>
                 <button class="secondary" onclick="toggleAllFilters()"><i class="fas fa-check-double"></i> Alla/Inga</button>
+                <button class="secondary" id="sync-btn" onclick="toggleTimeSync()" title="Synka feed med tidsfönstret i tidslinjen"><i class="fas fa-link"></i> Synka tid</button>
+                <button class="secondary" onclick="resetAll()"><i class="fas fa-undo"></i> Återställ</button>
             </div>
-            
-            <div class="filters" id="filter-container"></div>
+
+            <!-- Kategorikryssrutor -->
+            <div class="filters" id="filter-container" role="group" aria-label="Kategorifiltrar"></div>
+
+            <!-- Resultaträknare -->
+            <div class="result-bar" id="result-bar" aria-live="polite">
+                <span id="result-count">Laddar...</span>
+            </div>
+        </div>
+
+        <!-- Mobilknapp för att visa/dölja tidslinjen -->
+        <div class="timeline-toggle-bar">
+            <button class="secondary" id="timeline-toggle-btn" onclick="toggleMobileTimeline()">
+                <i class="fas fa-stream"></i> Visa tidslinje
+            </button>
         </div>
 
         <div id="visualization"></div>
     </section>
 
     <section class="bottom-section">
-        
         <aside class="sidebar">
             <h3><i class="fas fa-info-circle"></i> Teckenförklaring</h3>
             <div id="legend-container"></div>
         </aside>
-
         <div class="feed-container" id="feed-container"></div>
-
     </section>
 
 </div>
+
+<!-- Toast-meddelande -->
+<div class="toast" id="toast"></div>
 
 <script>
     // ==========================================================
@@ -208,23 +451,64 @@
     const blacklistedCategories = ['CYBER', 'THREAT', 'CRIME'];
 
     const categoryConfig = {
-        'DRONE':    { label: 'Drönare / UAV', icon: 'fa-plane', desc: 'Incidenter med UAV/drönare.' },
-        'INFRA':    { label: 'Infrastruktur / sabotage', icon: 'fa-bolt', desc: 'Kritisk infrastruktur, sabotage, störningar.' },
-        'NUCLEAR':  { label: 'Kärnenergi / farligt gods', icon: 'fa-radiation', desc: 'Kärntekniskt/farligt gods.' },
-        'TERROR':   { label: 'Terror / våld', icon: 'fa-bomb', desc: 'Terrorism och våldsbrott med hög påverkan.' },
-        'INTEL':    { label: 'Spionage / underrättelse', icon: 'fa-user-secret', desc: 'Spioneri, underrättelse, säkerhet.' },
-        'LEGAL':    { label: 'Rättsfall / domar', icon: 'fa-balance-scale', desc: 'Juridik, domar och rättsfall.' },
-        'MIL':      { label: 'Militär / försvar', icon: 'fa-shield-alt', desc: 'Militär aktivitet och försvar.' },
-        'HYBRID':   { label: 'Påverkan / hybrid', icon: 'fa-brain', desc: 'Informationspåverkan/hybridaktiviteter.' },
-        'MAR':      { label: 'Maritimt / skuggflotta', icon: 'fa-anchor', desc: 'Händelser till sjöss/skuggflotta.' },
-        'GPS':      { label: 'GPS-störning / signal', icon: 'fa-tower-broadcast', desc: 'GNSS-störningar och signalpåverkan.' },
-        'POLICY':   { label: 'Politik / policy', icon: 'fa-landmark', desc: 'Policy, myndigheter, styrdokument.' }
+        'DRONE':    { label: 'Drönare / UAV',             icon: 'fa-plane',          desc: 'Incidenter med UAV/drönare.' },
+        'INFRA':    { label: 'Infrastruktur / sabotage',  icon: 'fa-bolt',           desc: 'Kritisk infrastruktur, sabotage, störningar.' },
+        'NUCLEAR':  { label: 'Kärnenergi / farligt gods', icon: 'fa-radiation',      desc: 'Kärntekniskt/farligt gods.' },
+        'TERROR':   { label: 'Terror / våld',             icon: 'fa-bomb',           desc: 'Terrorism och våldsbrott med hög påverkan.' },
+        'INTEL':    { label: 'Spionage / underrättelse',  icon: 'fa-user-secret',    desc: 'Spioneri, underrättelse, säkerhet.' },
+        'LEGAL':    { label: 'Rättsfall / domar',         icon: 'fa-balance-scale',  desc: 'Juridik, domar och rättsfall.' },
+        'MIL':      { label: 'Militär / försvar',         icon: 'fa-shield-alt',     desc: 'Militär aktivitet och försvar.' },
+        'HYBRID':   { label: 'Påverkan / hybrid',         icon: 'fa-brain',          desc: 'Informationspåverkan/hybridaktiviteter.' },
+        'MAR':      { label: 'Maritimt / skuggflotta',    icon: 'fa-anchor',         desc: 'Händelser till sjöss/skuggflotta.' },
+        'GPS':      { label: 'GPS-störning / signal',     icon: 'fa-tower-broadcast',desc: 'GNSS-störningar och signalpåverkan.' },
+        'POLICY':   { label: 'Politik / policy',          icon: 'fa-landmark',       desc: 'Policy, myndigheter, styrdokument.' }
     };
 
     const defaultCatConfig = { label: 'Övrigt', icon: 'fa-circle', desc: 'Okategoriserad händelse.' };
 
+    // Fullständiga landnamn mappade från landskod
+    const countryNames = {
+        // Norden
+        'SE':'Sverige','NO':'Norge','DK':'Danmark','FI':'Finland','IS':'Island',
+        'GL':'Grönland','FO':'Färöarna',
+        // Väst- och Centraleuropa
+        'DE':'Tyskland','FR':'Frankrike','UK':'Storbritannien','GB':'Storbritannien',
+        'NL':'Nederländerna','BE':'Belgien','AT':'Österrike','CH':'Schweiz',
+        'ES':'Spanien','IT':'Italien','PT':'Portugal','IE':'Irland','LU':'Luxemburg',
+        // Östeuropa
+        'PL':'Polen','CZ':'Tjeckien','SK':'Slovakien','HU':'Ungern',
+        'RO':'Rumänien','BG':'Bulgarien','HR':'Kroatien','SI':'Slovenien',
+        'RS':'Serbien','BA':'Bosnien och Hercegovina','ME':'Montenegro',
+        'MK':'Nordmakedonien','AL':'Albanien','XK':'Kosovo',
+        'CY':'Cypern','GR':'Grekland','MT':'Malta',
+        // Baltikum
+        'EE':'Estland','LV':'Lettland','LT':'Litauen',
+        // Östeuropa / fd Sovjet
+        'RU':'Ryssland','UA':'Ukraina','BY':'Belarus','MD':'Moldavien',
+        'GE':'Georgien','AM':'Armenien','AZ':'Azerbajdzjan',
+        'KG':'Kirgizistan','TM':'Turkmenistan',
+        // Mellanöstern
+        'TR':'Turkiet','IR':'Iran','IL':'Israel','PS':'Palestina',
+        'SY':'Syrien','SA':'Saudiarabien','AE':'Förenade Arabemiraten',
+        'QA':'Qatar','BH':'Bahrain','YE':'Jemen','JO':'Jordanien',
+        // Asien och Oceanien
+        'CN':'Kina','HK':'Hongkong','TW':'Taiwan','JP':'Japan',
+        'KR':'Sydkorea','KP':'Nordkorea','IN':'Indien','VN':'Vietnam',
+        'MY':'Malaysia','PH':'Filippinerna','PG':'Papua Nya Guinea',
+        'NZ':'Nya Zeeland','AU':'Australien',
+        // Amerika
+        'US':'USA','CA':'Kanada','MX':'Mexiko','BR':'Brasilien',
+        'AR':'Argentina','VE':'Venezuela','EC':'Ecuador','CU':'Kuba',
+        'CR':'Costa Rica',
+        // Afrika
+        'ZA':'Sydafrika','DZ':'Algeriet','ML':'Mali','TG':'Togo',
+        'MG':'Madagaskar','SC':'Seychellerna','ER':'Eritrea',
+        // Övriga / multinationellt
+        'EU':'EU (multinationellt)','INT':'Internationellt','AQ':'Antarktis',
+    };
+
     // ==========================================================
-    //  2. DATA
+    //  2. DATA (infogas nedan via build-skript)
     // ==========================================================
     const rawEvents = [
  {country:'SE',cat:'HYBRID',title:'Misstänkta konton söker drönarpiloter i forum',place:'Sverige (online)',date:'2025-10-05',lat:59.334,lng:18.067,summary:'Nya, misstänkta Facebook-konton erbjuder betalning för flygningar nära skyddsobjekt, och de verkar veta vilka de ska rikta in sig på. Administratörer tar bort profiler varje vecka.',url:'https://www.sverigesradio.se/artikel/dronarpiloter-soks-upp-pa-facebook-for-att-spana-pa-skyddsobjekt',source:'Sveriges Radio (2025)'},
@@ -3390,14 +3674,36 @@
 {country:'GB',cat:'MAR',title:'Royal Navy följde rysk Kilo-klassubåt och bogserfartyg genom Nordsjön, Dover sund och Engelska kanalen',place:'Nordsjön, Dover sund och Engelska kanalen nära Storbritannien (GB)',date:'2025-12-07',lat:51.0500,lng:1.5000,summary:'Royal Navy följde den ryska Kilo-klassubåten Krasnodar och stödfartyget Altay under en tre dagar lång operation västerut genom Nordsjön, Dover sund och Engelska kanalen. Enligt Royal Navy ingick insatsen i Storbritanniens löpande övervakning av ryska marina rörelser nära landet.',url:'https://www.royalnavy.mod.uk/news/2025/december/11/20251112-royal-navy-tracks-russian-submarine-during-three-day-operation'},
 {country:'GB',cat:'MAR',title:'HMS Somerset och HMS Tyne följde rysk korvett genom brittiska vatten efter jul',place:'Brittiska vatten (GB)',date:'2025-12-27',lat:58.5000,lng:-2.0000,summary:'Besättningarna på HMS Somerset och HMS Tyne kallades in under julhelgen för att följa den ryska korvetten Soobrazitelny under en färd på över 500 miles genom brittiska vatten. Enligt Royal Navy ingick insatsen i Storbritanniens löpande övervakning av ryska örlogsfartyg nära landet.',url:'https://www.royalnavy.mod.uk/news/2025/january/01/20250101-hms-somerset-russians'},
 {country:'TR',cat:'LEGAL',title:'Turkisk dom dömer åtta i uppmärksammat Mossadmål',place:'Istanbul, Turkiet (TR)',date:'2026-04-03',lat:41.0082,lng:28.9784,summary:'En turkisk domstol i Istanbul dömde den 3 april åtta personer i ett uppmärksammat spionmål där den tidigare polismannen Hamza Turhan Ayberk pekades ut som huvudfigur i ett nätverk som enligt åklagarsidan arbetade för Israels underrättelsetjänst Mossad. Ayberk dömdes till 20 års fängelse för politiskt eller militärt spionage, medan sju andra dömda fick fyra år och två månader vardera för att ha samlat in uppgifter och dokument som rörde statens säkerhet.',url:'https://www.linkedin.com/feed/update/urn:li:activity:7446519454823239680'},
-];
+    ];
 
     const myEvents = rawEvents
         .filter(item => !blacklistedCategories.includes(item.cat))
         .map((item, index) => ({ ...item, id: index }));
 
     // ==========================================================
-    //  3. LOGIK
+    //  3. STATE
+    // ==========================================================
+    const uniqueCategories = [...new Set(myEvents.map(e => e.cat))].sort();
+    let activeCategories   = new Set(uniqueCategories);
+    let currentSearchTerm  = "";
+    let activeCountries    = new Set(); // tom = alla länder aktiva
+    let currentSort        = "newest";
+    let timeSyncEnabled    = false;
+
+    const categoryColors = {};
+    uniqueCategories.forEach(cat => {
+        categoryColors[cat] = stringToColor(cat + "seed");
+    });
+
+    const feedContainer    = document.getElementById('feed-container');
+    const filterContainer  = document.getElementById('filter-container');
+    const legendContainer  = document.getElementById('legend-container');
+    const mainContainer    = document.getElementById('main-container');
+    const resultBar        = document.getElementById('result-bar');
+    const resultCount      = document.getElementById('result-count');
+
+    // ==========================================================
+    //  4. HJÄLPFUNKTIONER
     // ==========================================================
     function stringToColor(str) {
         let hash = 0;
@@ -3406,39 +3712,201 @@
         return '#' + '00000'.substring(0, 6 - c.length) + c;
     }
 
-    const uniqueCategories = [...new Set(myEvents.map(e => e.cat))].sort();
-    let activeCategories = new Set(uniqueCategories);
-    let currentSearchTerm = "";
-
-    const categoryColors = {};
-    uniqueCategories.forEach(cat => {
-        categoryColors[cat] = stringToColor(cat + "seed");
-    });
-
-    const feedContainer = document.getElementById('feed-container');
-    const filterContainer = document.getElementById('filter-container');
-    const legendContainer = document.getElementById('legend-container');
-    const mainContainer = document.getElementById('main-container');
-
     function getCatInfo(catCode) {
         return categoryConfig[catCode] || { ...defaultCatConfig, label: catCode };
     }
 
-    function handleSearch() {
-        const input = document.getElementById('search-input');
-        currentSearchTerm = input.value.toLowerCase().trim();
+    function getCountryName(code) {
+        return countryNames[code] || code;
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2000);
+    }
+
+    // ==========================================================
+    //  5. LANDFILTER – MULTI-SELECT
+    // ==========================================================
+    // Beräkna antal händelser per land (baserat på alla icke-blacklistade events)
+    const countryEventCounts = {};
+    myEvents.forEach(e => { countryEventCounts[e.country] = (countryEventCounts[e.country] || 0) + 1; });
+
+    // Sorterade unika koder, A–Z på svenska landnamn
+    const allCountryCodes = [...new Set(myEvents.map(e => e.country))].sort((a, b) =>
+        getCountryName(a).localeCompare(getCountryName(b), 'sv')
+    );
+
+    function buildCountryList(filter = '') {
+        const list = document.getElementById('country-list');
+        list.innerHTML = '';
+        const lower = filter.toLowerCase();
+        allCountryCodes.forEach(code => {
+            const name = getCountryName(code);
+            if (lower && !name.toLowerCase().includes(lower) && !code.toLowerCase().includes(lower)) return;
+            const count   = countryEventCounts[code] || 0;
+            const selected = activeCountries.has(code);
+
+            const item = document.createElement('div');
+            item.className = 'country-list-item' + (selected ? ' selected' : '');
+            item.setAttribute('role', 'option');
+            item.setAttribute('aria-selected', selected);
+            item.innerHTML = `
+                <input type="checkbox" ${selected ? 'checked' : ''} aria-label="${name}">
+                <span>${name}</span>
+                <span class="count-badge">${count}</span>
+            `;
+            item.addEventListener('click', () => toggleCountry(code));
+            list.appendChild(item);
+        });
+    }
+
+    function toggleCountry(code) {
+        if (activeCountries.has(code)) activeCountries.delete(code);
+        else activeCountries.add(code);
+        updateCountryBtn();
+        buildCountryList(document.getElementById('country-search-input').value);
         renderAll();
     }
 
+    function selectAllCountries() {
+        allCountryCodes.forEach(c => activeCountries.add(c));
+        updateCountryBtn();
+        buildCountryList(document.getElementById('country-search-input').value);
+        renderAll();
+    }
+
+    function clearCountries() {
+        activeCountries.clear();
+        updateCountryBtn();
+        buildCountryList(document.getElementById('country-search-input').value);
+        renderAll();
+    }
+
+    function updateCountryBtn() {
+        const btn   = document.getElementById('country-filter-btn');
+        const label = document.getElementById('country-btn-label');
+        const n     = activeCountries.size;
+        if (n === 0) {
+            label.textContent = '🌍 Alla länder';
+            btn.classList.remove('has-selection');
+        } else if (n === 1) {
+            label.textContent = getCountryName([...activeCountries][0]);
+            btn.classList.add('has-selection');
+        } else {
+            label.textContent = `${n} länder valda`;
+            btn.classList.add('has-selection');
+        }
+    }
+
+    function filterCountryList() {
+        buildCountryList(document.getElementById('country-search-input').value);
+    }
+
+    function toggleCountryDropdown() {
+        const dropdown = document.getElementById('country-dropdown');
+        const btn      = document.getElementById('country-filter-btn');
+        const isOpen   = dropdown.classList.toggle('open');
+        btn.classList.toggle('open', isOpen);
+        btn.setAttribute('aria-expanded', isOpen);
+        if (isOpen) {
+            document.getElementById('country-search-input').value = '';
+            buildCountryList();
+            setTimeout(() => document.getElementById('country-search-input').focus(), 50);
+        }
+    }
+
+    // Stäng dropdown vid klick utanför
+    document.addEventListener('click', (e) => {
+        const wrapper = document.getElementById('country-filter-wrapper');
+        if (wrapper && !wrapper.contains(e.target)) {
+            document.getElementById('country-dropdown').classList.remove('open');
+            document.getElementById('country-filter-btn').classList.remove('open');
+            document.getElementById('country-filter-btn').setAttribute('aria-expanded', false);
+        }
+    });
+
+    // ==========================================================
+    //  6. EVENT HANDLERS
+    // ==========================================================
+    function handleSearch() {
+        currentSearchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+        renderAll();
+    }
+
+    function handleCountryFilter() {
+        // Behålls tom – logik hanteras nu via toggleCountry
+    }
+
+    function handleSort() {
+        currentSort = document.getElementById('sort-select').value;
+        renderAll();
+    }
+
+    function resetAll() {
+        document.getElementById('search-input').value = '';
+        document.getElementById('sort-select').value = 'newest';
+        currentSearchTerm = '';
+        currentSort       = 'newest';
+        activeCategories  = new Set(uniqueCategories);
+        activeCountries.clear();
+        timeSyncEnabled   = false;
+        updateCountryBtn();
+        buildCountryList();
+        document.getElementById('sync-btn').classList.remove('active-sync');
+        document.getElementById('sync-btn').innerHTML = '<i class="fas fa-link"></i> Synka tid';
+        createFilters();
+        renderAll();
+    }
+
+    // Klick på landtagg i feed → toggla det landet i multi-select
+    function filterByCountry(code) {
+        toggleCountry(code);
+        const isNowActive = activeCountries.has(code);
+        showToast(isNowActive ? 'Lade till: ' + getCountryName(code) : 'Tog bort: ' + getCountryName(code));
+    }
+
+    // Tidsfönstersynk toggle
+    function toggleTimeSync() {
+        timeSyncEnabled = !timeSyncEnabled;
+        const btn = document.getElementById('sync-btn');
+        if (timeSyncEnabled) {
+            btn.classList.add('active-sync');
+            btn.innerHTML = '<i class="fas fa-link"></i> Synkat';
+            showToast('Tidsfönstersynk aktiverad');
+        } else {
+            btn.classList.remove('active-sync');
+            btn.innerHTML = '<i class="fas fa-link"></i> Synka tid';
+            showToast('Tidsfönstersynk avstängd');
+        }
+        renderAll();
+    }
+
+    // Mobilvisning av tidslinjen
+    function toggleMobileTimeline() {
+        const vis = document.getElementById('visualization');
+        const btn = document.getElementById('timeline-toggle-btn');
+        const isVisible = vis.classList.toggle('mobile-visible');
+        btn.innerHTML = isVisible
+            ? '<i class="fas fa-times"></i> Dölj tidslinje'
+            : '<i class="fas fa-stream"></i> Visa tidslinje';
+        if (isVisible && timeline) { setTimeout(() => timeline.redraw(), 100); }
+    }
+
+    // ==========================================================
+    //  7. FILTER & LEGEND
+    // ==========================================================
     function createLegend() {
         legendContainer.innerHTML = '';
         uniqueCategories.forEach(cat => {
-            const info = getCatInfo(cat);
+            const info  = getCatInfo(cat);
             const color = categoryColors[cat];
             const itemDiv = document.createElement('div');
             itemDiv.className = 'legend-item';
             itemDiv.innerHTML = `
-                <div class="legend-icon" style="color:${color}"><i class="fas ${info.icon}"></i></div>
+                <div class="legend-icon" style="color:${color}"><i class="fas ${info.icon}" aria-hidden="true"></i></div>
                 <div class="legend-text">
                     <strong>${info.label}</strong>
                     <span>${info.desc}</span>
@@ -3449,26 +3917,30 @@
     }
 
     function createFilters() {
-        filterContainer.innerHTML = ''; 
+        filterContainer.innerHTML = '';
         uniqueCategories.forEach(cat => {
-            const info = getCatInfo(cat);
+            const info  = getCatInfo(cat);
             const label = document.createElement('label');
-            label.style.borderColor = categoryColors[cat]; 
+            label.style.borderColor = categoryColors[cat];
+
             const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
+            checkbox.type    = 'checkbox';
             checkbox.checked = activeCategories.has(cat);
-            checkbox.value = cat;
+            checkbox.value   = cat;
+            checkbox.setAttribute('aria-label', info.label);
             checkbox.addEventListener('change', (e) => {
                 if (e.target.checked) activeCategories.add(cat);
                 else activeCategories.delete(cat);
                 renderAll();
             });
             label.appendChild(checkbox);
+
             const span = document.createElement('span');
-            span.innerHTML = `<i class="fas ${info.icon}" style="color:${categoryColors[cat]}; margin-right:5px;"></i> ${info.label}`;
+            span.innerHTML = `<i class="fas ${info.icon}" style="color:${categoryColors[cat]}; margin-right:5px;" aria-hidden="true"></i>${info.label}`;
             span.style.color = "#333";
             span.style.fontWeight = "600";
             label.appendChild(span);
+
             filterContainer.appendChild(label);
         });
     }
@@ -3479,52 +3951,180 @@
         } else {
             activeCategories = new Set(uniqueCategories);
         }
-        createFilters(); 
+        createFilters();
         renderAll();
     }
 
-    // -- HELSKÄRMSLOGIK (FIXAD HÖJD) --
-    function enterFullscreen() {
-        if (mainContainer.requestFullscreen) mainContainer.requestFullscreen();
-        else if (mainContainer.webkitRequestFullscreen) mainContainer.webkitRequestFullscreen();
-        else if (mainContainer.msRequestFullscreen) mainContainer.msRequestFullscreen();
-        
-        mainContainer.classList.add('fullscreen-mode');
-        document.getElementById('open-fs-btn').style.display = 'none';
-        document.getElementById('close-fs-btn').style.display = 'flex';
-        
-        // Räkna ut höjd dynamiskt för att fylla skärmen
-        // Total höjd - Höjd på filter/knappar - lite marginal
-        setTimeout(() => {
-            const controlsHeight = document.getElementById('controls-panel').offsetHeight;
-            const windowHeight = window.innerHeight;
-            const availableHeight = windowHeight - controlsHeight - 40; // 40px padding/margin
-            if(timeline) {
-                timeline.setOptions({ height: availableHeight + 'px' });
-                timeline.redraw();
+    // ==========================================================
+    //  8. RENDERINGSLOGIK
+    // ==========================================================
+    function getFiltered(timeWindow) {
+        return myEvents.filter(item => {
+            const hasCategory = activeCategories.has(item.cat);
+            let matchesCountry = true;
+            if (activeCountries.size > 0) matchesCountry = activeCountries.has(item.country);
+
+            let matchesSearch = true;
+            if (currentSearchTerm) {
+                const fullName = getCountryName(item.country).toLowerCase();
+                const searchString = `${item.title} ${item.summary} ${item.place} ${item.country} ${fullName}`.toLowerCase();
+                matchesSearch = searchString.includes(currentSearchTerm);
             }
-        }, 200); // Liten fördröjning för att webbläsaren ska hinna rendera fullscreen
+
+            let matchesTime = true;
+            if (timeSyncEnabled && timeWindow) {
+                const d = new Date(item.date);
+                matchesTime = (d >= timeWindow.start && d <= timeWindow.end);
+            }
+
+            return hasCategory && matchesCountry && matchesSearch && matchesTime;
+        });
     }
 
-    function exitFullscreen() {
-        if (document.exitFullscreen) document.exitFullscreen();
-        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-        else if (document.msExitFullscreen) document.msExitFullscreen();
-    }
-
-    document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement) {
-            mainContainer.classList.remove('fullscreen-mode');
-            document.getElementById('open-fs-btn').style.display = 'flex';
-            document.getElementById('close-fs-btn').style.display = 'none';
-            if(timeline) {
-                timeline.setOptions({ height: '500px' }); // Tillbaka till normal höjd
-            }
+    function sortEvents(arr) {
+        const sorted = [...arr];
+        switch (currentSort) {
+            case 'newest':
+                sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
+                break;
+            case 'oldest':
+                sorted.sort((a, b) => new Date(a.date) - new Date(b.date));
+                break;
+            case 'country':
+                sorted.sort((a, b) => getCountryName(a.country).localeCompare(getCountryName(b.country), 'sv'));
+                break;
+            case 'category':
+                sorted.sort((a, b) => getCatInfo(a.cat).label.localeCompare(getCatInfo(b.cat).label, 'sv'));
+                break;
         }
-    });
+        return sorted;
+    }
 
+    function updateResultBar(filtered) {
+        const totalVisible = filtered.length;
+        const totalAll     = myEvents.length;
+        const countries    = [...new Set(filtered.map(e => e.country))].length;
+        const cats         = [...new Set(filtered.map(e => e.cat))].length;
+
+        resultCount.innerHTML =
+            `Visar <strong>${totalVisible}</strong> av <strong>${totalAll}</strong> händelser` +
+            `<span class="result-sep">·</span><strong>${countries}</strong> länder` +
+            `<span class="result-sep">·</span><strong>${cats}</strong> kategorier` +
+            (timeSyncEnabled ? `<span class="result-sep">·</span><i class="fas fa-link" style="color:#27ae60"></i> Tidsstyrd` : '');
+    }
+
+    function renderAll(timeWindow) {
+        feedContainer.innerHTML = '';
+
+        const filtered = getFiltered(timeWindow);
+        updateResultBar(filtered);
+
+        if (filtered.length === 0) {
+            feedContainer.innerHTML = '<p style="text-align:center; color:#777; margin-top:20px;">Inga händelser matchar dina val.</p>';
+            timelineData.clear();
+            return;
+        }
+
+        // Uppdatera tidslinjen
+        timelineData.clear();
+        const timelineItems = filtered.map(item => ({
+            id: item.id,
+            group: item.cat,
+            start: item.date,
+            content: `<span style="color:${categoryColors[item.cat]}">●</span> ${item.title.substring(0, 25)}...`,
+            title: `<div style="max-width:250px;"><b>${item.title}</b><br><small>${getCountryName(item.country)}, ${item.date}</small><br><br>${item.summary}</div>`,
+            style: `background-color: white; border: 1px solid ${categoryColors[item.cat]}; border-left: 5px solid ${categoryColors[item.cat]}; color: #333; border-radius: 3px; cursor: pointer; font-size: 0.85em;`
+        }));
+        timelineData.add(timelineItems);
+
+        const activeGroupIds = uniqueCategories.filter(cat => activeCategories.has(cat));
+        timelineGroups.forEach(group => {
+            timelineGroups.update({ id: group.id, visible: activeGroupIds.includes(group.id) });
+        });
+
+        // Rendera feed
+        const sortedList = sortEvents(filtered);
+        sortedList.forEach(item => {
+            const info    = getCatInfo(item.cat);
+            const details = document.createElement('details');
+            details.className = 'feed-item';
+            details.id        = `item-${item.id}`;
+            details.style.borderLeft = `6px solid ${categoryColors[item.cat]}`;
+
+            const summary = document.createElement('summary');
+            const countryDisplay = getCountryName(item.country);
+            summary.innerHTML = `
+                <div class="summary-content">
+                    <span class="date-badge">${item.date}</span>
+                    <span class="country-tag" onclick="event.stopPropagation(); filterByCountry('${item.country}')" title="Filtrera på ${countryDisplay}">${countryDisplay}</span>
+                    <span class="title-text">${item.title}</span>
+                    <button class="share-btn" onclick="event.stopPropagation(); shareItem(${item.id})" title="Kopiera länk till händelsen" aria-label="Dela">
+                        <i class="fas fa-link"></i>
+                    </button>
+                    <span class="cat-badge" style="background-color: ${categoryColors[item.cat]}">${info.label}</span>
+                </div>
+            `;
+
+            const content = document.createElement('div');
+            content.className = 'content';
+
+            let htmlContent = `<p><b>Plats:</b> ${item.place} (${countryDisplay})</p>`;
+            htmlContent    += `<p>${item.summary}</p>`;
+            if (item.source) htmlContent += `<p style="font-size:0.9em; color:#666;">Källa: ${item.source}</p>`;
+            if (item.url)    htmlContent += `<a href="${item.url}" target="_blank" rel="noopener noreferrer" class="source-link">Läs mer &rarr;</a>`;
+            content.innerHTML = htmlContent;
+
+            details.appendChild(summary);
+            details.appendChild(content);
+            feedContainer.appendChild(details);
+        });
+
+        // Hantera URL-hash vid sidladdning
+        if (pendingHash) {
+            const el = document.getElementById(pendingHash);
+            if (el) {
+                el.open = true;
+                setTimeout(() => {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    el.classList.add('highlight-item');
+                    setTimeout(() => el.classList.remove('highlight-item'), 2000);
+                }, 100);
+            }
+            pendingHash = null;
+        }
+    }
+
+    // ==========================================================
+    //  9. DELA / URL-HASH
+    // ==========================================================
+    function shareItem(id) {
+        const url = window.location.href.split('#')[0] + '#item-' + id;
+        navigator.clipboard.writeText(url).then(() => {
+            showToast('Länk kopierad!');
+        }).catch(() => {
+            // Fallback
+            const inp = document.createElement('input');
+            inp.value = url;
+            document.body.appendChild(inp);
+            inp.select();
+            document.execCommand('copy');
+            document.body.removeChild(inp);
+            showToast('Länk kopierad!');
+        });
+        window.location.hash = 'item-' + id;
+    }
+
+    // Läs hash vid sidladdning
+    let pendingHash = null;
+    if (window.location.hash) {
+        pendingHash = window.location.hash.substring(1); // ta bort #
+    }
+
+    // ==========================================================
+    //  10. TIDSLINJE
+    // ==========================================================
     let timeline;
-    let timelineData = new vis.DataSet([]);
+    let timelineData   = new vis.DataSet([]);
     let timelineGroups = new vis.DataSet([]);
 
     function initTimeline() {
@@ -3532,33 +4132,33 @@
             const info = getCatInfo(cat);
             return {
                 id: cat,
-                content: `<i class="fas ${info.icon}" style="color:${categoryColors[cat]}"></i> <b>${info.label}</b>`,
+                content: `<i class="fas ${info.icon}" style="color:${categoryColors[cat]}" aria-hidden="true"></i> <b>${info.label}</b>`,
                 style: `border-left: 5px solid ${categoryColors[cat]}; font-size: 0.9em;`
             };
         });
         timelineGroups.add(groups);
 
         const options = {
-            height: '500px', 
-            verticalScroll: true, 
+            height: '500px',
+            verticalScroll: true,
             horizontalScroll: true,
             zoomKey: 'ctrlKey',
             stack: true,
-            orientation: { axis: 'top', item: 'top' }, 
-            zoomMin: 1000 * 60 * 60 * 24 * 1, 
+            orientation: { axis: 'top', item: 'top' },
+            zoomMin: 1000 * 60 * 60 * 24 * 1,
             zoomMax: 1000 * 60 * 60 * 24 * 365 * 2,
-            start: '2025-08-01', 
-            end: '2025-12-01',
+            start: '2025-08-01',
+            end:   '2025-12-01',
             margin: { item: 10, axis: 5 }
         };
 
         const timelineContainer = document.getElementById('visualization');
         timeline = new vis.Timeline(timelineContainer, timelineData, timelineGroups, options);
-        
+
+        // Klick på timeline-item → scrolla till feed-kort
         timeline.on('select', function (properties) {
-            if(properties.items.length > 0) {
-                const uniqueId = properties.items[0]; 
-                
+            if (properties.items.length > 0) {
+                const uniqueId = properties.items[0];
                 if (document.fullscreenElement) {
                     exitFullscreen();
                     setTimeout(() => scrollToItem(uniqueId), 300);
@@ -3567,20 +4167,28 @@
                 }
             }
         });
+
+        // Tidsfönstersynk: rendera om feed när tidslinjen panoreras/zoomas
+        timeline.on('rangechanged', function() {
+            if (timeSyncEnabled) {
+                const win = timeline.getWindow();
+                renderAll(win);
+            }
+        });
     }
-    
+
     function scrollToItem(uniqueId) {
         const element = document.getElementById(`item-${uniqueId}`);
-        if(element) {
+        if (element) {
             element.open = true;
-            element.scrollIntoView({behavior: "smooth", block: "center"});
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
             element.classList.add('highlight-item');
             setTimeout(() => element.classList.remove('highlight-item'), 2000);
         }
     }
 
     function zoomTimeline(percentage) {
-        const range = timeline.getWindow();
+        const range    = timeline.getWindow();
         const interval = range.end - range.start;
         timeline.setWindow({
             start: range.start.valueOf() - interval * percentage,
@@ -3588,81 +4196,52 @@
         });
     }
 
-    function renderAll() {
-        feedContainer.innerHTML = '';
-        
-        const filtered = myEvents.filter(item => {
-            const hasCategory = activeCategories.has(item.cat);
-            let matchesSearch = true;
-            if (currentSearchTerm) {
-                const searchString = `${item.title} ${item.summary} ${item.place} ${item.country}`.toLowerCase();
-                matchesSearch = searchString.includes(currentSearchTerm);
+    // ==========================================================
+    //  11. HELSKÄRM
+    // ==========================================================
+    function enterFullscreen() {
+        if (mainContainer.requestFullscreen)       mainContainer.requestFullscreen();
+        else if (mainContainer.webkitRequestFullscreen) mainContainer.webkitRequestFullscreen();
+        else if (mainContainer.msRequestFullscreen)     mainContainer.msRequestFullscreen();
+
+        mainContainer.classList.add('fullscreen-mode');
+        document.getElementById('open-fs-btn').style.display  = 'none';
+        document.getElementById('close-fs-btn').style.display = 'flex';
+
+        setTimeout(() => {
+            const controlsHeight  = document.getElementById('controls-panel').offsetHeight;
+            const availableHeight = window.innerHeight - controlsHeight - 40;
+            if (timeline) {
+                timeline.setOptions({ height: availableHeight + 'px' });
+                timeline.redraw();
             }
-            return hasCategory && matchesSearch;
-        });
-
-        if (filtered.length === 0) {
-            feedContainer.innerHTML = '<p style="text-align:center; color:#777; margin-top:20px;">Inga händelser matchar dina val.</p>';
-            timelineData.clear();
-            return;
-        }
-
-        timelineData.clear();
-        const timelineItems = filtered.map(item => ({
-            id: item.id, 
-            group: item.cat, 
-            start: item.date,
-            content: `<span style="color:${categoryColors[item.cat]}">●</span> ${item.title.substring(0, 25)}...`,
-            title: `<div style="max-width:250px;"><b>${item.title}</b><br><br>${item.summary}</div>`,
-            style: `background-color: white; border: 1px solid ${categoryColors[item.cat]}; border-left: 5px solid ${categoryColors[item.cat]}; color: #333; border-radius: 3px; cursor: pointer; font-size: 0.85em;`
-        }));
-        timelineData.add(timelineItems);
-
-        const activeGroupIds = uniqueCategories.filter(cat => activeCategories.has(cat));
-        timelineGroups.forEach(group => {
-            timelineGroups.update({id: group.id, visible: activeGroupIds.includes(group.id)});
-        });
-
-        const sortedList = [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date));
-
-        sortedList.forEach(item => {
-            const info = getCatInfo(item.cat);
-            const details = document.createElement('details');
-            details.className = 'feed-item';
-            details.id = `item-${item.id}`; 
-            details.style.borderLeft = `6px solid ${categoryColors[item.cat]}`;
-
-            const summary = document.createElement('summary');
-            summary.innerHTML = `
-                <div class="summary-content">
-                    <span class="date-badge">${item.date}</span>
-                    <span class="title-text">${item.title}</span>
-                    <span class="cat-badge" style="background-color: ${categoryColors[item.cat]}">${info.label}</span>
-                </div>
-            `;
-
-            const content = document.createElement('div');
-            content.className = 'content';
-            
-            let htmlContent = `<p><b>Plats:</b> ${item.place} (${item.country})</p>`;
-            htmlContent += `<p>${item.summary}</p>`;
-            if(item.source) htmlContent += `<p style="font-size:0.9em; color:#666;">Källa: ${item.source}</p>`;
-            if(item.url) htmlContent += `<a href="${item.url}" target="_blank" class="source-link">Läs mer &rarr;</a>`;
-
-            content.innerHTML = htmlContent;
-
-            details.appendChild(summary);
-            details.appendChild(content);
-            feedContainer.appendChild(details);
-        });
+        }, 200);
     }
 
+    function exitFullscreen() {
+        if (document.exitFullscreen)            document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.msExitFullscreen)     document.msExitFullscreen();
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement) {
+            mainContainer.classList.remove('fullscreen-mode');
+            document.getElementById('open-fs-btn').style.display  = 'flex';
+            document.getElementById('close-fs-btn').style.display = 'none';
+            if (timeline) { timeline.setOptions({ height: '500px' }); }
+        }
+    });
+
+    // ==========================================================
+    //  12. INIT
+    // ==========================================================
+    buildCountryList();
     createLegend();
     createFilters();
     initTimeline();
     renderAll();
 
 </script>
-
 </body>
 </html>
