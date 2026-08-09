@@ -10,15 +10,28 @@
 
     let toolsButton = null;
 
-    function redrawTimelineForMobile() {
-        if (!mq.matches || !visualization || !visualization.classList.contains('mobile-visible')) return;
-        const h = Math.max(260, Math.min(360, Math.round(window.innerHeight * 0.42)));
+    function redrawTimelineAfterLayout() {
+        if (!visualization) return;
         try {
-            if (typeof timeline !== 'undefined' && timeline) {
+            if (typeof timeline === 'undefined' || !timeline) return;
+
+            if (mq.matches) {
+                if (!visualization.classList.contains('mobile-visible')) return;
+                const h = Math.max(260, Math.min(360, Math.round(window.innerHeight * 0.42)));
                 timeline.setOptions({ height: h + 'px' });
-                timeline.redraw();
+            } else if (!document.fullscreenElement) {
+                timeline.setOptions({ height: '500px' });
             }
+
+            timeline.redraw();
         } catch (_) {}
+    }
+
+    function scheduleTimelineRedraw() {
+        // Wrapper-sidan byggs med document.write(). Vis Timeline kan därför
+        // initieras innan webbläsaren hunnit mäta den slutliga layouten.
+        // Flera sena redraws gör initieringen robust på både desktop och mobil.
+        [0, 80, 250, 700].forEach(delay => setTimeout(redrawTimelineAfterLayout, delay));
     }
 
     function setToolsOpen(open) {
@@ -66,7 +79,7 @@
 
     if (timelineToggle) {
         timelineToggle.addEventListener('click', () => {
-            setTimeout(redrawTimelineForMobile, 120);
+            setTimeout(redrawTimelineAfterLayout, 120);
         });
     }
 
@@ -77,7 +90,7 @@
             if (visualization && !visualization.classList.contains('mobile-visible')) {
                 // befintlig mobilfunktion håller tidslinjen stängd tills användaren öppnar den
             } else {
-                redrawTimelineForMobile();
+                redrawTimelineAfterLayout();
             }
         } else {
             if (controls) controls.classList.remove('mobile-tools-open');
@@ -97,9 +110,17 @@
     let resizeTimer;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(redrawTimelineForMobile, 120);
+        resizeTimer = setTimeout(redrawTimelineAfterLayout, 120);
     });
 
     applyMode();
-    setTimeout(redrawTimelineForMobile, 180);
+    scheduleTimelineRedraw();
+    window.addEventListener('load', scheduleTimelineRedraw, { once: true });
+    if ('ResizeObserver' in window && visualization) {
+        const ro = new ResizeObserver(entries => {
+            const box = entries[0] && entries[0].contentRect;
+            if (box && box.width > 0 && box.height > 0) setTimeout(redrawTimelineAfterLayout, 30);
+        });
+        ro.observe(visualization);
+    }
 })();
