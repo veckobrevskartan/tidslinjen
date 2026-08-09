@@ -24,7 +24,7 @@
 
         html = html.replace(
             '</head>',
-            '<link rel="stylesheet" href="mobile.css?v=20260809-1">\n</head>'
+            '<link rel="stylesheet" href="mobile.css?v=20260809-2">\n</head>'
         );
 
         const marker = '    const myEvents = rawEvents';
@@ -32,7 +32,7 @@
 
         const currentLoader =
             '</scr' + 'ipt>\n' +
-            '<script src="data/events-current.js?v=20260809-1"></scr' + 'ipt>\n' +
+            '<script src="data/events-current.js?v=20260809-2"></scr' + 'ipt>\n' +
             '<script>\n' +
             '    if (Array.isArray(window.TIMELINE_CURRENT_EVENTS) && window.TIMELINE_CURRENT_EVENTS.length) {\n' +
             '        rawEvents.push(...window.TIMELINE_CURRENT_EVENTS);\n' +
@@ -43,7 +43,7 @@
 
         html = html.replace(
             '</body>',
-            '<script src="mobile.js?v=20260809-1"></scr' + 'ipt>\n</body>'
+            '<script src="mobile.js?v=20260809-2"></scr' + 'ipt>\n</body>'
         );
 
         document.open();
