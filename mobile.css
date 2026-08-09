@@ -1,0 +1,213 @@
+/* Responsiva förbättringar för Tidslinjen */
+
+.mobile-filter-toggle{display:none}
+
+/* Legendrubriken får en tydlig öppna/stäng-indikator. */
+.sidebar .legend-toggle-heading{
+    cursor:pointer;
+    user-select:none;
+    display:flex;
+    align-items:center;
+    gap:.45rem;
+}
+.sidebar .legend-toggle-heading::after{
+    content:'▾';
+    margin-left:auto;
+    color:#78838e;
+    transition:transform .18s ease;
+}
+.sidebar.mobile-collapsed .legend-toggle-heading::after{transform:rotate(-90deg)}
+
+.app-container.fullscreen-mode{
+    height:100vh;
+    height:100dvh;
+}
+
+@media (max-width:900px){
+    .app-container{max-width:100%}
+    .bottom-section{gap:12px}
+}
+
+@media (max-width:600px){
+    html,body{max-width:100%;overflow-x:hidden}
+    body{
+        padding:max(6px,env(safe-area-inset-top)) max(6px,env(safe-area-inset-right))
+                max(8px,env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left));
+        overflow-y:auto;
+        -webkit-text-size-adjust:100%;
+    }
+
+    .app-container{width:100%;max-width:100%;margin:0}
+    .top-section{
+        padding:10px;
+        margin-bottom:10px;
+        border-radius:10px;
+    }
+    .top-section>h2{
+        font-size:1rem;
+        line-height:1.25;
+        margin-bottom:10px!important;
+    }
+
+    /* Sökningen först, land och sortering på en egen rad. */
+    .controls{gap:8px;margin-bottom:10px}
+    .search-row{
+        display:grid;
+        grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+        gap:8px;
+        max-width:none;
+    }
+    .search-wrapper{grid-column:1/-1;min-width:0}
+    .search-wrapper input{
+        min-height:44px;
+        font-size:16px; /* undviker automatisk zoom i iOS */
+        padding:10px 12px 10px 38px;
+    }
+    .country-filter-wrapper,.sort-select-wrapper{min-width:0;width:100%}
+    .country-filter-btn,.sort-select-wrapper select{
+        width:100%;
+        min-width:0;
+        min-height:42px;
+        padding:8px 10px;
+        font-size:.82rem;
+    }
+    .country-filter-btn .btn-label{min-width:0;max-width:none}
+    .country-dropdown{
+        position:fixed;
+        top:auto;
+        left:8px;
+        right:8px;
+        width:auto;
+        max-height:min(58dvh,430px);
+        z-index:10000;
+    }
+
+    /* Sekundära verktyg och kategorier är hopfällbara på telefon. */
+    .mobile-filter-toggle{
+        display:flex;
+        width:100%;
+        justify-content:center;
+        min-height:42px;
+        border-radius:8px;
+    }
+    .controls>.btn-group,
+    .controls>.filters{display:none}
+    .controls.mobile-tools-open>.btn-group{display:flex}
+    .controls.mobile-tools-open>.filters{display:flex}
+
+    .btn-group{
+        width:100%;
+        gap:6px;
+        justify-content:flex-start;
+    }
+    .btn-group button{
+        min-height:40px;
+        padding:7px 10px;
+        flex:1 1 auto;
+        justify-content:center;
+    }
+    .filters{
+        justify-content:flex-start;
+        width:100%;
+        gap:6px;
+        padding:2px 0;
+    }
+    .filters label{
+        min-height:32px;
+        padding:5px 8px;
+        font-size:.72rem;
+    }
+    .result-bar{
+        width:100%;
+        box-sizing:border-box;
+        justify-content:center;
+        padding:6px 10px;
+    }
+
+    /* Tidslinjen är en egen tydlig panel, stängd från början. */
+    .timeline-toggle-bar{
+        display:flex;
+        margin:4px 0 0;
+    }
+    .timeline-toggle-bar button{
+        width:100%;
+        justify-content:center;
+        min-height:42px;
+        border-radius:8px;
+    }
+    #visualization{
+        display:none;
+        width:100%!important;
+        min-width:0;
+        margin-top:8px;
+        border-radius:8px;
+        overflow:hidden;
+    }
+    #visualization.mobile-visible{display:block}
+    #visualization .vis-timeline{font-size:11px}
+
+    /* Legend blir en verkligt kollapsbar ruta. */
+    .bottom-section{
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+    }
+    .sidebar{
+        position:static;
+        margin:0;
+        padding:0;
+        border-radius:10px;
+        overflow:hidden;
+    }
+    .sidebar h3{
+        margin:0;
+        padding:12px 14px;
+        border-bottom:0;
+        min-height:44px;
+        box-sizing:border-box;
+    }
+    .sidebar #legend-container{padding:4px 14px 10px}
+    .sidebar.mobile-collapsed #legend-container{display:none}
+    .sidebar:not(.mobile-collapsed) h3{border-bottom:1px solid #eee}
+    .legend-item{margin-bottom:9px}
+
+    /* Feedkort: metadata överst, rubriken på egen rad. */
+    .feed-container{padding-bottom:24px}
+    .feed-item{margin-bottom:8px;border-radius:8px;scroll-margin-top:8px}
+    summary{
+        padding:11px 12px;
+        align-items:flex-start;
+        gap:6px;
+    }
+    .summary-content{gap:6px}
+    .title-text{
+        order:10;
+        flex:1 0 100%;
+        min-width:0;
+        font-size:.94rem;
+        line-height:1.3;
+    }
+    .cat-badge{display:none}
+    .date-badge,.country-tag{font-size:.72rem}
+    .share-btn{margin-left:auto;min-height:30px}
+    .content{
+        padding:12px;
+        font-size:.92rem;
+        line-height:1.5;
+        overflow-wrap:anywhere;
+    }
+    .source-link{overflow-wrap:anywhere}
+
+    .toast{
+        bottom:calc(14px + env(safe-area-inset-bottom));
+        max-width:calc(100vw - 24px);
+        box-sizing:border-box;
+        text-align:center;
+    }
+}
+
+@media (max-width:380px){
+    .top-section>h2{font-size:.92rem}
+    .country-filter-btn,.sort-select-wrapper select{font-size:.76rem}
+    .btn-group button{font-size:.75rem}
+}
